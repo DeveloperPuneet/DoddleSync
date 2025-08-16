@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoodleSync Room - <%= roomId %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="icon">🎨</i>
+                <span>DoodleSync</span>
+            </div>
+            <div class="room-info-header">
+                <div class="room-id">Room: <span id="room-id-display"><%= roomId %></span></div>
+                <button id="copy-link" class="btn btn-outline">
+                    <i class="icon">🔗</i> Copy Link
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="drawing-room">
+            <div class="toolbar">
+                <div class="tool-section">
+                    <button class="tool-btn active" data-tool="pencil">
+                        <i class="icon">✏️</i> Pencil
+                    </button>
+                    <button class="tool-btn" data-tool="brush">
+                        <i class="icon">🖌️</i> Brush
+                    </button>
+                    <button class="tool-btn" data-tool="eraser">
+                        <i class="icon">🧹</i> Eraser
+                    </button>
+                    <button class="tool-btn" data-tool="line">
+                        <i class="icon">📏</i> Line
+                    </button>
+                    <button class="tool-btn" data-tool="rectangle">
+                        <i class="icon">⬜</i> Rectangle
+                    </button>
+                    <button class="tool-btn" data-tool="circle">
+                        <i class="icon">⭕</i> Circle
+                    </button>
+                </div>
+                
+                <div class="tool-section">
+                    <div class="color-palette">
+                        <div class="color-btn active" style="background-color: #000000;" data-color="#000000"></div>
+                        <div class="color-btn" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                        <div class="color-btn" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                        <div class="color-btn" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                        <div class="color-btn" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                        <div class="color-btn" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                        <div class="color-btn" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                    </div>
+                    <input type="color" id="color-picker" value="#000000">
+                </div>
+                
+                <div class="tool-section">
+                    <div class="brush-sizes">
+                        <div class="size-btn active" data-size="1">1</div>
+                        <div class="size-btn" data-size="3">3</div>
+                        <div class="size-btn" data-size="5">5</div>
+                        <div class="size-btn" data-size="10">10</div>
+                        <div class="size-btn" data-size="20">20</div>
+                    </div>
+                    <button class="tool-btn" id="clear-canvas">
+                        <i class="icon">🗑️</i> Clear
+                    </button>
+                    <button class="tool-btn" id="save-canvas">
+                        <i class="icon">💾</i> Save
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="drawingCanvas"></canvas>
+            </div>
+            
+            <div class="room-footer">
+                <div class="user-list">
+                    <div class="user-badge">
+                        <div class="user-avatar">Y</div>
+                        <span id="username-display">Doodler-1234</span>
+                    </div>
+                    <div class="users-in-room" id="users-in-room">
+                        <!-- Users will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <div class="room-actions">
+                    <button id="lock-room-btn" class="btn btn-outline">
+                        <i class="icon">🔒</i> Lock Room
+                    </button>
+                    <button id="leave-room-btn" class="btn btn-danger">
+                        <i class="icon">🚪</i> Leave Room
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/canvas.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        const roomId = '<%= roomId %>';
+        const socket = io();
+        let username = '';
+        
+        // Get random username
+        socket.on('connect', () => {
+            username = socket.username;
+            document.getElementById('username-display').textContent = username;
+            socket.emit('joinRoom', roomId);
+        });
+        
+        // Handle user list updates
+        socket.on('userJoined', (data) => {
+            updateUserList(data.users);
+        });
+        
+        socket.on('userLeft', (data) => {
+            updateUserList(data.users);
+        });
+        
+        function updateUserList(users) {
+            const userListContainer = document.getElementById('users-in-room');
+            userListContainer.innerHTML = '';
+            
+            users.forEach(user => {
+                if (user !== username) {
+                    const userBadge = document.createElement('div');
+                    userBadge.className = 'user-badge';
+                    userBadge.innerHTML = `
+                        <div class="user-avatar">${user.charAt(0)}</div>
+                        <span>${user}</span>
+                    `;
+                    userListContainer.appendChild(userBadge);
+                }
+            });
+        }
+        
+        // Copy room link
+        document.getElementById('copy-link').addEventListener('click', () => {
+            const roomLink = `${window.location.origin}/room/${roomId}`;
+            navigator.clipboard.writeText(roomLink)
+                .then(() => {
+                    alert('Room link copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+        });
+    </script>
+</body>
+</html>

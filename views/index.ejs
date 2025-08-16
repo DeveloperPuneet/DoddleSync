@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoodleSync - Instant Collaborative Drawing</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="icon">🎨</i>
+                <span>DoodleSync</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Draw Together in <span class="gradient-text">Real-Time</span></h1>
+                <p>No signup required. Create a room, share the link, and start doodling with friends!</p>
+                <div class="hero-buttons">
+                    <button id="create-room-btn" class="btn btn-primary">Create Room</button>
+                    <div class="join-room">
+                        <input type="text" id="room-code" placeholder="Enter room code">
+                        <button id="join-room-btn" class="btn btn-outline">Join Room</button>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/images/doodle-hero.svg" alt="Collaborative drawing illustration">
+            </div>
+        </div>
+
+        <section id="features" class="features-section">
+            <h2>Awesome Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Instant Collaboration</h3>
+                    <p>Draw with friends in real-time without any signup</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Powerful Tools</h3>
+                    <p>Pencils, brushes, shapes, and colors for any creative need</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Room Controls</h3>
+                    <p>Lock rooms, clear canvas, and save your creations</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Create a Room</h3>
+                    <p>Click "Create Room" to start a new drawing session</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Invite Friends</h3>
+                    <p>Share the room link with anyone you want to collaborate with</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Start Drawing</h3>
+                    <p>Use the drawing tools to create something amazing together</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <h2>Contact Us</h2>
+            <p>Have questions or feedback? We'd love to hear from you!</p>
+            <div class="contact-info">
+                <a href="mailto:developerpuneet2010@gmail.com" class="contact-link">
+                    <i class="icon">✉️</i> developerpuneet2010@gmail.com
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>DoodleSync</h2>
+                <p>Collaborative drawing made simple and fun</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 DoodleSync | Created with ❤️ by Puneet</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('create-room-btn').addEventListener('click', () => {
+            // Generate a random room ID
+            const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            window.location.href = `/room/${roomId}`;
+        });
+
+        document.getElementById('join-room-btn').addEventListener('click', () => {
+            const roomCode = document.getElementById('room-code').value.trim();
+            if (roomCode) {
+                window.location.href = `/room/${roomCode}`;
+            } else {
+                alert('Please enter a room code');
+            }
+        });
+    </script>
+</body>
+</html>
