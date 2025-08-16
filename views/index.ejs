@@ -4,13 +4,504 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoodleSync - Instant Collaborative Drawing</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --dark: #1e1e1e;
+            --light: #f8f9fa;
+            --gradient-start: #1a2a6c;
+            --gradient-mid: #b21f1f;
+            --gradient-end: #1a2a6c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 0;
+            min-height: 90vh;
+        }
+        
+        .hero-content {
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #ff9966, #ff5e62);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+        }
+        
+        .btn {
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .join-room {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #room-code {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        #room-code::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        section {
+            padding: 80px 0;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        h2:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--primary);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+        
+        .features-section, .how-it-works, .contact-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            opacity: 0.8;
+        }
+        
+        /* Enhanced How It Works Section */
+        .how-it-works {
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            position: relative;
+        }
+        
+        .steps-container:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            background: var(--primary);
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .step-content {
+            flex: 1;
+            background: rgba(67, 97, 238, 0.15);
+            border-radius: 15px;
+            padding: 30px;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .step h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .step p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .step-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .step-image img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .step-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .step-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .step-btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .contact-section {
+            text-align: center;
+        }
+        
+        .contact-info {
+            margin-top: 30px;
+        }
+        
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .contact-link:hover {
+            background: rgba(67, 97, 238, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 50px 0 20px;
+            margin-top: 80px;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-logo h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        
+        .footer-logo h2:after {
+            display: none;
+        }
+        
+        .footer-logo p {
+            opacity: 0.8;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 50px 0;
+            }
+            
+            .hero-buttons {
+                margin: 0 auto;
+            }
+            
+            .join-room {
+                flex-direction: column;
+            }
+            
+            .steps-container:before {
+                display: none;
+            }
+            
+            .step, .step:nth-child(even) {
+                flex-direction: column;
+            }
+            
+            .step-image {
+                min-height: 200px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-section, .how-it-works, .contact-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="header-container">
             <div class="logo">
-                <i class="icon">🎨</i>
+                <i class="fas fa-palette"></i>
                 <span>DoodleSync</span>
             </div>
             <div class="nav-links">
@@ -25,17 +516,21 @@
         <div class="hero">
             <div class="hero-content">
                 <h1>Draw Together in <span class="gradient-text">Real-Time</span></h1>
-                <p>No signup required. Create a room, share the link, and start doodling with friends!</p>
+                <p>No signup required. Create a room, share the link, and start doodling with friends instantly!</p>
                 <div class="hero-buttons">
-                    <button id="create-room-btn" class="btn btn-primary">Create Room</button>
+                    <button id="create-room-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Room
+                    </button>
                     <div class="join-room">
                         <input type="text" id="room-code" placeholder="Enter room code">
-                        <button id="join-room-btn" class="btn btn-outline">Join Room</button>
+                        <button id="join-room-btn" class="btn btn-outline">
+                            <i class="fas fa-sign-in-alt"></i> Join Room
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="hero-image">
-                <img src="/images/doodle-hero.svg" alt="Collaborative drawing illustration">
+                <img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=2000&auto=format&fit=crop" alt="Collaborative drawing">
             </div>
         </div>
 
@@ -43,40 +538,102 @@
             <h2>Awesome Features</h2>
             <div class="features">
                 <div class="feature-card">
-                    <div class="feature-icon">👥</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
                     <h3>Instant Collaboration</h3>
-                    <p>Draw with friends in real-time without any signup</p>
+                    <p>Draw with friends in real-time without any signup or registration required. Just share a link and start creating together.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
                     <h3>Powerful Tools</h3>
-                    <p>Pencils, brushes, shapes, and colors for any creative need</p>
+                    <p>Access a variety of drawing tools including pencils, brushes, shapes, and a rich color palette for any creative need.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
                     <h3>Room Controls</h3>
-                    <p>Lock rooms, clear canvas, and save your creations</p>
+                    <p>Manage your drawing sessions with room locking, canvas clearing, and saving options to preserve your creations.</p>
                 </div>
             </div>
         </section>
 
+        <!-- Enhanced How It Works Section -->
         <section id="how-it-works" class="how-it-works">
             <h2>How It Works</h2>
-            <div class="steps">
+            <div class="steps-container">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Create a Room</h3>
-                    <p>Click "Create Room" to start a new drawing session</p>
+                    <div class="step-content">
+                        <h3>Create a Room</h3>
+                        <p>Start a new drawing session by clicking the "Create Room" button. We'll generate a unique room ID that you can share with others.</p>
+                        <p>No registration or login required - just one click and you're ready to draw!</p>
+                        <div class="step-actions">
+                            <button class="step-btn">
+                                <i class="fas fa-play-circle"></i> Try it now
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-image">
+                        <img src="https://images.unsplash.com/photo-1558494941-15c0e4a68b8b?q=80&w=1974&auto=format&fit=crop" alt="Create room" style="max-height: 300px;">
+                    </div>
                 </div>
+                
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Invite Friends</h3>
-                    <p>Share the room link with anyone you want to collaborate with</p>
+                    <div class="step-content">
+                        <h3>Invite Friends</h3>
+                        <p>Share your unique room link with friends via email, social media, or messaging apps. Anyone with the link can join your drawing session instantly.</p>
+                        <p>Room links are automatically copied to your clipboard for easy sharing!</p>
+                        <div class="step-actions">
+                            <button class="step-btn">
+                                <i class="fas fa-share-alt"></i> Share options
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-image">
+                        <img src="https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=1974&auto=format&fit=crop" alt="Invite friends" style="max-height: 300px;">
+                    </div>
                 </div>
+                
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Start Drawing</h3>
-                    <p>Use the drawing tools to create something amazing together</p>
+                    <div class="step-content">
+                        <h3>Collaborate in Real-Time</h3>
+                        <p>Work together on the same canvas with multiple users. See everyone's drawings appear instantly as they create.</p>
+                        <p>Use our intuitive tools to draw, erase, add shapes, and type text - all in perfect sync with your collaborators.</p>
+                        <div class="step-actions">
+                            <button class="step-btn">
+                                <i class="fas fa-sync-alt"></i> Real-time demo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-image">
+                        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" alt="Collaborate" style="max-height: 300px;">
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Save & Share Your Creation</h3>
+                        <p>When you're done, save your masterpiece as an image file to your device with one click.</p>
+                        <p>Share your artwork directly to social media or download it for printing and future reference.</p>
+                        <div class="step-actions">
+                            <button class="step-btn">
+                                <i class="fas fa-download"></i> Download example
+                            </button>
+                            <button class="step-btn">
+                                <i class="fas fa-share"></i> Share artwork
+                            </button>
+                        </div>
+                    </div>
+                    <div class="step-image">
+                        <img src="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=1974&auto=format&fit=crop" alt="Save artwork" style="max-height: 300px;">
+                    </div>
                 </div>
             </div>
         </section>
@@ -86,7 +643,7 @@
             <p>Have questions or feedback? We'd love to hear from you!</p>
             <div class="contact-info">
                 <a href="mailto:developerpuneet2010@gmail.com" class="contact-link">
-                    <i class="icon">✉️</i> developerpuneet2010@gmail.com
+                    <i class="fas fa-envelope"></i> developerpuneet2010@gmail.com
                 </a>
             </div>
         </section>
@@ -124,6 +681,34 @@
             } else {
                 alert('Please enter a room code');
             }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Animation for step elements
+        const steps = document.querySelectorAll('.step');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        steps.forEach(step => {
+            step.style.opacity = 0;
+            step.style.transform = 'translateY(20px)';
+            step.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(step);
         });
     </script>
 </body>

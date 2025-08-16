@@ -1,38 +1,38 @@
 // Canvas drawing logic
 document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('drawingCanvas');
-    const ctx = canvas.getContext('2d');
-    const socket = io();
+    const canvas = document.getElementById('drawingCanvas'); // Get canvas element 🖼️
+    const ctx = canvas.getContext('2d'); // Get drawing context 🖌️
+    const socket = io(); // Initialize socket.io client 🔌
     
     // Set canvas to full size of container
     function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        canvas.width = canvas.offsetWidth; // Set width
+        canvas.height = canvas.offsetHeight; // Set height
     }
     
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas); // Resize on window 🔄
+    resizeCanvas(); // Initial canvas resize
     
     // Drawing state
-    let drawing = false;
-    let currentTool = 'pencil';
-    let currentColor = '#000000';
-    let currentSize = 3;
-    let startX = 0;
-    let startY = 0;
+    let drawing = false; // Is drawing active? ✍️
+    let currentTool = 'pencil'; // Current selected tool 🛠️
+    let currentColor = '#000000'; // Current selected color 🎨
+    let currentSize = 3; // Current brush size 📏
+    let startX = 0; // Start X coordinate
+    let startY = 0; // Start Y coordinate
     
     // Setup canvas
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = currentSize;
+    ctx.lineJoin = 'round'; // Set line join style
+    ctx.lineCap = 'round'; // Set line cap style
+    ctx.strokeStyle = currentColor; // Set initial stroke style
+    ctx.lineWidth = currentSize; // Set initial line width
     
     // Tool selection
     document.querySelectorAll('.tool-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentTool = btn.dataset.tool;
+            currentTool = btn.dataset.tool; // Update current tool
         });
     });
     
@@ -41,13 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentColor = btn.dataset.color;
+            currentColor = btn.dataset.color; // Update current color
             document.getElementById('color-picker').value = btn.dataset.color;
         });
     });
     
     document.getElementById('color-picker').addEventListener('input', (e) => {
-        currentColor = e.target.value;
+        currentColor = e.target.value; // Update color from picker
     });
     
     // Size selection
@@ -55,15 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentSize = parseInt(btn.dataset.size);
+            currentSize = parseInt(btn.dataset.size); // Parse size to int
         });
     });
     
     // Canvas functions
     function startDrawing(e) {
-        drawing = true;
+        drawing = true; // Start drawing flag
         const pos = getMousePos(canvas, e);
-        [startX, startY] = [pos.x, pos.y];
+        [startX, startY] = [pos.x, pos.y]; // Store start position
         
         if (currentTool === 'text') {
             const text = prompt('Enter text:');
@@ -91,20 +91,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const x = pos.x;
         const y = pos.y;
         
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = currentSize;
+        ctx.strokeStyle = currentColor; // Set stroke color
+        ctx.lineWidth = currentSize; // Set line width
         
         switch(currentTool) {
             case 'pencil':
             case 'brush':
             case 'eraser':
                 if (currentTool === 'eraser') {
-                    ctx.strokeStyle = '#1e1e1e';
+                    ctx.strokeStyle = '#1e1e1e'; // Eraser color is bg
                 }
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(x, y);
-                ctx.stroke();
+                ctx.beginPath(); // Start new path
+                ctx.moveTo(startX, startY); // Move to start
+                ctx.lineTo(x, y); // Draw line to point
+                ctx.stroke(); // Actually draw the line
                 
                 if (roomId) {
                     socket.emit('draw', {
@@ -120,11 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
                 
-                [startX, startY] = [x, y];
+                [startX, startY] = [x, y]; // Update start position
                 break;
                 
             case 'line':
-                redrawCanvas();
+                redrawCanvas(); // Redraw the canvas
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(x, y);
@@ -147,21 +147,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function drawText(x, y, text) {
-        ctx.font = `${currentSize * 5}px Arial`;
-        ctx.fillStyle = currentColor;
-        ctx.fillText(text, x, y);
+        ctx.font = `${currentSize * 5}px Arial`; // Set text font
+        ctx.fillStyle = currentColor; // Set text color
+        ctx.fillText(text, x, y); // Draw the text
     }
     
     function stopDrawing() {
         if (!drawing) return;
-        drawing = false;
+        drawing = false; // Stop drawing
     }
     
     function getMousePos(canvas, evt) {
         const rect = canvas.getBoundingClientRect();
         return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top
+            x: evt.clientX - rect.left, // Calculate mouse X pos
+            y: evt.clientY - rect.top // Calculate mouse Y pos
         };
     }
     
@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Clear canvas
     document.getElementById('clear-canvas').addEventListener('click', () => {
-        ctx.fillStyle = '#1e1e1e';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#1e1e1e'; // Fill with background color
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // Clear the canvas
         
         if (roomId) {
             socket.emit('clearCanvas', roomId);
@@ -181,17 +181,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Save canvas
     document.getElementById('save-canvas').addEventListener('click', () => {
-        const dataUrl = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.download = 'doodlesync-drawing.png';
-        link.href = dataUrl;
-        link.click();
+        const dataUrl = canvas.toDataURL('image/png'); // Get data URL
+        const link = document.createElement('a'); // Create link element
+        link.download = 'doodlesync-drawing.png'; // Set download name
+        link.href = dataUrl; // Set data URL
+        link.click(); // Simulate a click
     });
     
     // Socket listeners for remote drawing
     socket.on('draw', (data) => {
-        ctx.strokeStyle = data.color;
-        ctx.lineWidth = data.size;
+        ctx.strokeStyle = data.color; // Set remote color
+        ctx.lineWidth = data.size; // Set remote line width
         
         if (data.type === 'text') {
             ctx.font = `${data.size * 5}px Arial`;
@@ -233,20 +233,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     socket.on('clearCanvas', () => {
-        ctx.fillStyle = '#1e1e1e';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#1e1e1e'; // Set background color
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // Clear the canvas
     });
     
     // Event listeners
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
+    canvas.addEventListener('mousedown', startDrawing); // Start drawing
+    canvas.addEventListener('mousemove', draw); // While mouse moving
+    canvas.addEventListener('mouseup', stopDrawing); // Stop drawing
+    canvas.addEventListener('mouseout', stopDrawing); // Stop drawing
     
     // Touch events for mobile
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchmove', handleTouchMove);
-    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchstart', handleTouchStart); // Handle touch start
+    canvas.addEventListener('touchmove', handleTouchMove); // Handle touch move
+    canvas.addEventListener('touchend', handleTouchEnd); // Handle touch end
     
     function handleTouchStart(e) {
         e.preventDefault();
@@ -290,6 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Leave room
     document.getElementById('leave-room-btn').addEventListener('click', () => {
-        window.location.href = '/';
+        window.location.href = '/'; // Redirect to homepage
     });
 });

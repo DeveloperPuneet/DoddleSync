@@ -3,158 +3,1106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoodleSync Room - <%= roomId %></title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>DoodleSync - Room <%= roomId %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --dark: #1e1e1e;
+            --light: #f8f9fa;
+            --danger: #e63946;
+            --success: #2a9d8f;
+            --warning: #f4a261;
+            --pencil: #6c757d;
+            --marker: #e76f51;
+            --brush: #2a9d8f;
+            --neon: #e9c46a;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .logo i {
+            color: var(--accent);
+        }
+        
+        .room-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .room-id {
+            background: var(--primary);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+        
+        .copy-btn {
+            background: var(--success);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+            gap: 20px;
+            height: calc(100vh - 160px);
+        }
+        
+        .tools-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+        
+        .panel-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .panel-title {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .tool-btn.active, .tool-btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tool-btn.pencil.active, .tool-btn.pencil:hover {
+            background: var(--pencil);
+        }
+        
+        .tool-btn.marker.active, .tool-btn.marker:hover {
+            background: var(--marker);
+        }
+        
+        .tool-btn.brush.active, .tool-btn.brush:hover {
+            background: var(--brush);
+        }
+        
+        .tool-btn.neon.active, .tool-btn.neon:hover {
+            background: var(--neon);
+        }
+        
+        .tool-btn i {
+            font-size: 1.4rem;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+        
+        .color-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .color-btn.active {
+            transform: scale(1.15);
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .size-control {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .size-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+        
+        .size-preview {
+            width: 100%;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .size-circle {
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .action-btn.danger {
+            background: var(--danger);
+        }
+        
+        .action-btn.danger:hover {
+            background: #c82333;
+        }
+        
+        .action-btn.success {
+            background: var(--success);
+        }
+        
+        .action-btn.success:hover {
+            background: #218838;
+        }
+        
+        .action-btn.warning {
+            background: var(--warning);
+        }
+        
+        .action-btn.warning:hover {
+            background: #e76f51;
+        }
+        
+        .drawing-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            height: 100%;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .canvas-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #drawingCanvas {
+            background: #1e1e1e;
+            cursor: crosshair;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #tempCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .users-panel {
+            display: flex;
+            gap: 10px;
+            padding: 15px 0 0;
+            flex-wrap: wrap;
+        }
+        
+        .user-badge {
+            background: rgba(67, 97, 238, 0.3);
+            padding: 8px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-badge i {
+            color: var(--accent);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(200%);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+        }
+        
+        .brush-presets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .brush-preset {
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .brush-preset:hover, .brush-preset.active {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .brush-preview {
+            width: 100%;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .brush-line {
+            height: 4px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .tools-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .panel-section {
+                flex: 1;
+                min-width: 200px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .tools-panel {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="header-container">
+    <div class="container">
+        <header>
             <div class="logo">
-                <i class="icon">🎨</i>
-                <span>DoodleSync</span>
+                <i class="fas fa-palette"></i>
+                <span>DoodleSync Pro</span>
             </div>
-            <div class="room-info-header">
-                <div class="room-id">Room: <span id="room-id-display"><%= roomId %></span></div>
-                <button id="copy-link" class="btn btn-outline">
-                    <i class="icon">🔗</i> Copy Link
+            <div class="room-info">
+                <div>Room ID: <span class="room-id" id="room-id"><%= roomId %></span></div>
+                <button class="copy-btn" id="copy-btn">
+                    <i class="fas fa-copy"></i> Copy
                 </button>
             </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="drawing-room">
-            <div class="toolbar">
-                <div class="tool-section">
-                    <button class="tool-btn active" data-tool="pencil">
-                        <i class="icon">✏️</i> Pencil
-                    </button>
-                    <button class="tool-btn" data-tool="brush">
-                        <i class="icon">🖌️</i> Brush
-                    </button>
-                    <button class="tool-btn" data-tool="eraser">
-                        <i class="icon">🧹</i> Eraser
-                    </button>
-                    <button class="tool-btn" data-tool="line">
-                        <i class="icon">📏</i> Line
-                    </button>
-                    <button class="tool-btn" data-tool="rectangle">
-                        <i class="icon">⬜</i> Rectangle
-                    </button>
-                    <button class="tool-btn" data-tool="circle">
-                        <i class="icon">⭕</i> Circle
-                    </button>
+            <div class="user-count">
+                <i class="fas fa-users"></i> <span id="user-count">1</span> Users
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="tools-panel">
+                <div class="panel-section">
+                    <div class="panel-title">
+                        <i class="fas fa-pencil-alt"></i>
+                        <span>Drawing Tools</span>
+                    </div>
+                    <div class="tools-grid">
+                        <button class="tool-btn pencil active" data-tool="pencil">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Pencil</span>
+                        </button>
+                        <button class="tool-btn marker" data-tool="marker">
+                            <i class="fas fa-marker"></i>
+                            <span>Marker</span>
+                        </button>
+                        <button class="tool-btn brush" data-tool="brush">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>Brush</span>
+                        </button>
+                        <button class="tool-btn neon" data-tool="neon">
+                            <i class="fas fa-brush"></i>
+                            <span>Neon</span>
+                        </button>
+                        <button class="tool-btn" data-tool="eraser">
+                            <i class="fas fa-eraser"></i>
+                            <span>Eraser</span>
+                        </button>
+                        <button class="tool-btn" data-tool="line">
+                            <i class="fas fa-grip-lines"></i>
+                            <span>Line</span>
+                        </button>
+                        <button class="tool-btn" data-tool="rectangle">
+                            <i class="far fa-square"></i>
+                            <span>Rectangle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="circle">
+                            <i class="far fa-circle"></i>
+                            <span>Circle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="text">
+                            <i class="fas fa-font"></i>
+                            <span>Text</span>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="tool-section">
-                    <div class="color-palette">
-                        <div class="color-btn active" style="background-color: #000000;" data-color="#000000"></div>
-                        <div class="color-btn" style="background-color: #ff0000;" data-color="#ff0000"></div>
-                        <div class="color-btn" style="background-color: #00ff00;" data-color="#00ff00"></div>
-                        <div class="color-btn" style="background-color: #0000ff;" data-color="#0000ff"></div>
-                        <div class="color-btn" style="background-color: #ffff00;" data-color="#ffff00"></div>
-                        <div class="color-btn" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
-                        <div class="color-btn" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                <div class="panel-section">
+                    <div class="panel-title">
+                        <i class="fas fa-palette"></i>
+                        <span>Colors</span>
                     </div>
-                    <input type="color" id="color-picker" value="#000000">
+                    <div class="color-grid">
+                        <div class="color-btn active" style="background: #000000;" data-color="#000000"></div>
+                        <div class="color-btn" style="background: #ff0000;" data-color="#ff0000"></div>
+                        <div class="color-btn" style="background: #00ff00;" data-color="#00ff00"></div>
+                        <div class="color-btn" style="background: #0000ff;" data-color="#0000ff"></div>
+                        <div class="color-btn" style="background: #ffff00;" data-color="#ffff00"></div>
+                        <div class="color-btn" style="background: #ff00ff;" data-color="#ff00ff"></div>
+                        <div class="color-btn" style="background: #00ffff;" data-color="#00ffff"></div>
+                        <div class="color-btn" style="background: #ff7700;" data-color="#ff7700"></div>
+                        <div class="color-btn" style="background: #9900ff;" data-color="#9900ff"></div>
+                        <div class="color-btn" style="background: #00ff77;" data-color="#00ff77"></div>
+                        <div class="color-btn" style="background: #ff0077;" data-color="#ff0077"></div>
+                        <div class="color-btn" style="background: #ffffff;" data-color="#ffffff"></div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label for="color-picker" style="display: block; margin-bottom: 5px; color: var(--accent);">Custom Color:</label>
+                        <input type="color" id="color-picker" value="#000000" style="width: 100%; height: 40px;">
+                    </div>
                 </div>
                 
-                <div class="tool-section">
-                    <div class="brush-sizes">
-                        <div class="size-btn active" data-size="1">1</div>
-                        <div class="size-btn" data-size="3">3</div>
-                        <div class="size-btn" data-size="5">5</div>
-                        <div class="size-btn" data-size="10">10</div>
-                        <div class="size-btn" data-size="20">20</div>
+                <div class="panel-section">
+                    <div class="panel-title">
+                        <i class="fas fa-arrows-alt-v"></i>
+                        <span>Brush Size & Style</span>
                     </div>
-                    <button class="tool-btn" id="clear-canvas">
-                        <i class="icon">🗑️</i> Clear
-                    </button>
-                    <button class="tool-btn" id="save-canvas">
-                        <i class="icon">💾</i> Save
-                    </button>
+                    <div class="size-control">
+                        <label for="size-slider" style="display: block; margin-bottom: 5px; color: var(--accent);">Size: <span id="size-value">5</span>px</label>
+                        <input type="range" min="1" max="50" value="5" class="size-slider" id="size-slider">
+                        <div class="brush-presets">
+                            <div class="brush-preset active" data-preset="solid">
+                                <div class="brush-preview">
+                                    <div class="brush-line" style="width: 80%; background: white;"></div>
+                                </div>
+                                <span>Solid</span>
+                            </div>
+                            <div class="brush-preset" data-preset="dashed">
+                                <div class="brush-preview">
+                                    <div style="width: 80%; display: flex; gap: 2px;">
+                                        <div style="height: 4px; width: 8px; background: white;"></div>
+                                        <div style="height: 4px; width: 8px; background: white;"></div>
+                                        <div style="height: 4px; width: 8px; background: white;"></div>
+                                    </div>
+                                </div>
+                                <span>Dashed</span>
+                            </div>
+                            <div class="brush-preset" data-preset="dotted">
+                                <div class="brush-preview">
+                                    <div style="width: 80%; display: flex; gap: 2px;">
+                                        <div style="height: 4px; width: 4px; background: white; border-radius: 50%;"></div>
+                                        <div style="height: 4px; width: 4px; background: white; border-radius: 50%;"></div>
+                                        <div style="height: 4px; width: 4px; background: white; border-radius: 50%;"></div>
+                                    </div>
+                                </div>
+                                <span>Dotted</span>
+                            </div>
+                            <div class="brush-preset" data-preset="textured">
+                                <div class="brush-preview">
+                                    <div style="width: 80%; height: 4px; background: repeating-linear-gradient(45deg, white, white 2px, transparent 2px, transparent 4px);"></div>
+                                </div>
+                                <span>Textured</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <div class="panel-title">
+                        <i class="fas fa-cog"></i>
+                        <span>Actions</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" id="clear-canvas">
+                            <i class="fas fa-trash-alt"></i> Clear Canvas
+                        </button>
+                        <button class="action-btn success" id="save-canvas">
+                            <i class="fas fa-save"></i> Save Drawing
+                        </button>
+                        <button class="action-btn danger" id="leave-room-btn">
+                            <i class="fas fa-sign-out-alt"></i> Leave Room
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <div class="canvas-container">
-                <canvas id="drawingCanvas"></canvas>
-            </div>
-            
-            <div class="room-footer">
-                <div class="user-list">
+            <div class="drawing-area">
+                <div class="canvas-container">
+                    <div class="canvas-wrapper">
+                        <canvas id="drawingCanvas"></canvas>
+                        <canvas id="tempCanvas"></canvas>
+                    </div>
+                </div>
+                <div class="users-panel" id="users-panel">
                     <div class="user-badge">
-                        <div class="user-avatar">Y</div>
-                        <span id="username-display">Doodler-1234</span>
+                        <i class="fas fa-user"></i> You
                     </div>
-                    <div class="users-in-room" id="users-in-room">
-                        <!-- Users will be added here dynamically -->
-                    </div>
-                </div>
-                
-                <div class="room-actions">
-                    <button id="lock-room-btn" class="btn btn-outline">
-                        <i class="icon">🔒</i> Lock Room
-                    </button>
-                    <button id="leave-room-btn" class="btn btn-danger">
-                        <i class="icon">🚪</i> Leave Room
-                    </button>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notification-text">Copied to clipboard!</span>
+    </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/canvas.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <script>
-        const roomId = '<%= roomId %>';
-        const socket = io();
-        let username = '';
-        
-        // Get random username
-        socket.on('connect', () => {
-            username = socket.username;
-            document.getElementById('username-display').textContent = username;
-            socket.emit('joinRoom', roomId);
-        });
-        
-        // Handle user list updates
-        socket.on('userJoined', (data) => {
-            updateUserList(data.users);
-        });
-        
-        socket.on('userLeft', (data) => {
-            updateUserList(data.users);
-        });
-        
-        function updateUserList(users) {
-            const userListContainer = document.getElementById('users-in-room');
-            userListContainer.innerHTML = '';
+        // Initialize variables
+        const roomId = "<%= roomId %>";
+        let drawing = false;
+        let currentTool = 'pencil';
+        let currentColor = '#000000';
+        let currentSize = 5;
+        let startX = 0;
+        let startY = 0;
+        let users = [];
+        let brushStyle = 'solid';
+        let socket;
+        let username = `User-${Math.floor(Math.random() * 10000)}`;
+
+        // Get DOM elements
+        const canvas = document.getElementById('drawingCanvas');
+        const tempCanvas = document.getElementById('tempCanvas');
+        const ctx = canvas.getContext('2d');
+        const tempCtx = tempCanvas.getContext('2d');
+        const roomIdElement = document.getElementById('room-id');
+        const copyBtn = document.getElementById('copy-btn');
+        const userCountElement = document.getElementById('user-count');
+        const usersPanel = document.getElementById('users-panel');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notification-text');
+        const sizeValue = document.getElementById('size-value');
+
+        // Setup canvas
+        function setupCanvas() {
+            const container = document.querySelector('.canvas-container');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            tempCanvas.width = container.clientWidth;
+            tempCanvas.height = container.clientHeight;
             
-            users.forEach(user => {
-                if (user !== username) {
-                    const userBadge = document.createElement('div');
-                    userBadge.className = 'user-badge';
-                    userBadge.innerHTML = `
-                        <div class="user-avatar">${user.charAt(0)}</div>
-                        <span>${user}</span>
-                    `;
-                    userListContainer.appendChild(userBadge);
+            ctx.fillStyle = '#1e1e1e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            tempCtx.fillStyle = '#1e1e1e';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentSize;
+        }
+
+        window.addEventListener('resize', setupCanvas);
+        setupCanvas();
+
+        // Initialize Socket.IO connection
+        function initSocket() {
+            socket = io();
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                socket.emit('joinRoom', roomId);
+            });
+
+            socket.on('draw', (data) => {
+                if (data.username !== username) {
+                    handleRemoteDrawing(data);
                 }
             });
-        }
-        
-        // Copy room link
-        document.getElementById('copy-link').addEventListener('click', () => {
-            const roomLink = `${window.location.origin}/room/${roomId}`;
-            navigator.clipboard.writeText(roomLink)
-                .then(() => {
-                    alert('Room link copied to clipboard!');
-                })
-                .catch(err => {
-                    console.error('Failed to copy: ', err);
+
+            socket.on('userJoined', (data) => {
+                users = data.users;
+                updateUserList();
+                showNotification(`${data.username} joined the room`, 'success');
+            });
+
+            socket.on('userLeft', (data) => {
+                users = data.users;
+                updateUserList();
+                showNotification(`${data.username} left the room`, 'warning');
+            });
+
+            socket.on('canvasCleared', () => {
+                ctx.fillStyle = '#1e1e1e';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentSize;
+            });
+
+            socket.on('drawingHistory', (history) => {
+                ctx.fillStyle = '#1e1e1e';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                history.forEach(data => {
+                    if (data.username !== username) {
+                        handleRemoteDrawing(data);
+                    }
                 });
+            });
+        }
+
+        // Initialize the socket connection
+        initSocket();
+
+        // Handle remote drawing data
+        function handleRemoteDrawing(data) {
+            const prevStrokeStyle = ctx.strokeStyle;
+            const prevFillStyle = ctx.fillStyle;
+            const prevLineWidth = ctx.lineWidth;
+            const prevLineDash = ctx.getLineDash();
+
+            ctx.strokeStyle = data.color;
+            ctx.fillStyle = data.color;
+            ctx.lineWidth = data.size;
+
+            if (data.brushStyle === 'dashed') {
+                ctx.setLineDash([10, 5]);
+            } else if (data.brushStyle === 'dotted') {
+                ctx.setLineDash([2, 3]);
+            } else if (data.brushStyle === 'textured') {
+                ctx.setLineDash([5, 3, 2, 3]);
+            } else {
+                ctx.setLineDash([]);
+            }
+
+            switch(data.tool) {
+                case 'freehand':
+                    ctx.beginPath();
+                    ctx.moveTo(data.prevX, data.prevY);
+                    ctx.lineTo(data.x, data.y);
+                    ctx.stroke();
+                    break;
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(data.startX, data.startY);
+                    ctx.lineTo(data.x, data.y);
+                    ctx.stroke();
+                    break;
+                case 'rectangle':
+                    ctx.beginPath();
+                    ctx.rect(data.startX, data.startY, data.width, data.height);
+                    ctx.stroke();
+                    break;
+                case 'circle':
+                    ctx.beginPath();
+                    ctx.arc(data.startX, data.startY, data.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    break;
+                case 'text':
+                    ctx.font = `${data.size * 5}px Arial`;
+                    ctx.fillText(data.text, data.x, data.y);
+                    break;
+            }
+
+            // Restore original settings
+            ctx.strokeStyle = prevStrokeStyle;
+            ctx.fillStyle = prevFillStyle;
+            ctx.lineWidth = prevLineWidth;
+            ctx.setLineDash(prevLineDash);
+        }
+
+        // Update user list
+        function updateUserList() {
+            usersPanel.innerHTML = '';
+            users.forEach(user => {
+                const userBadge = document.createElement('div');
+                userBadge.className = 'user-badge';
+                const isYou = user === username ? ' (You)' : '';
+                userBadge.innerHTML = `<i class="fas fa-user"></i> ${user}${isYou}`;
+                usersPanel.appendChild(userBadge);
+            });
+            userCountElement.textContent = users.length;
+        }
+
+        // Show notification
+        function showNotification(text, type = 'success') {
+            notificationText.textContent = text;
+            notification.className = 'notification';
+            notification.classList.add(type);
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Drawing functions
+        function startDrawing(e) {
+            drawing = true;
+            const pos = getMousePos(canvas, e);
+            [startX, startY] = [pos.x, pos.y];
+            
+            if (currentTool === 'text') {
+                const text = prompt('Enter text:');
+                if (text) {
+                    drawText(startX, startY, text);
+                    socket.emit('draw', {
+                        tool: 'text',
+                        x: startX,
+                        y: startY,
+                        text: text,
+                        color: currentColor,
+                        size: currentSize,
+                        roomId: roomId,
+                        username: username
+                    });
+                }
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+            }
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            
+            const pos = getMousePos(canvas, e);
+            const x = pos.x;
+            const y = pos.y;
+            
+            tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            switch(currentTool) {
+                case 'pencil':
+                case 'marker':
+                case 'brush':
+                case 'neon':
+                case 'eraser':
+                    if (currentTool === 'eraser') {
+                        ctx.strokeStyle = '#1e1e1e';
+                    } else if (currentTool === 'neon') {
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = currentColor;
+                    }
+                    
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    
+                    if (currentTool === 'neon') {
+                        ctx.shadowBlur = 0;
+                    }
+                    
+                    socket.emit('draw', {
+                        tool: 'freehand',
+                        prevX: startX,
+                        prevY: startY,
+                        x: x,
+                        y: y,
+                        color: currentTool === 'eraser' ? '#1e1e1e' : currentColor,
+                        size: currentSize,
+                        brushStyle: brushStyle,
+                        roomId: roomId,
+                        username: username
+                    });
+                    
+                    startX = x;
+                    startY = y;
+                    break;
+                    
+                case 'line':
+                    tempCtx.strokeStyle = currentColor;
+                    tempCtx.lineWidth = currentSize;
+                    tempCtx.beginPath();
+                    tempCtx.moveTo(startX, startY);
+                    tempCtx.lineTo(x, y);
+                    tempCtx.stroke();
+                    break;
+                    
+                case 'rectangle':
+                    tempCtx.strokeStyle = currentColor;
+                    tempCtx.lineWidth = currentSize;
+                    tempCtx.strokeRect(startX, startY, x - startX, y - startY);
+                    break;
+                    
+                case 'circle':
+                    tempCtx.strokeStyle = currentColor;
+                    tempCtx.lineWidth = currentSize;
+                    const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+                    tempCtx.beginPath();
+                    tempCtx.arc(startX, startY, radius, 0, Math.PI * 2);
+                    tempCtx.stroke();
+                    break;
+            }
+        }
+
+        function stopDrawing() {
+            if (!drawing) return;
+            drawing = false;
+            
+            if (['line', 'rectangle', 'circle'].includes(currentTool)) {
+                ctx.drawImage(tempCanvas, 0, 0);
+                tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                
+                const endPos = getMousePos(canvas, { clientX: startX, clientY: startY });
+                
+                const drawingData = {
+                    tool: currentTool,
+                    color: currentColor,
+                    size: currentSize,
+                    brushStyle: brushStyle,
+                    roomId: roomId,
+                    username: username
+                };
+                
+                if (currentTool === 'line') {
+                    drawingData.startX = startX;
+                    drawingData.startY = startY;
+                    drawingData.x = endPos.x;
+                    drawingData.y = endPos.y;
+                } else if (currentTool === 'rectangle') {
+                    drawingData.startX = startX;
+                    drawingData.startY = startY;
+                    drawingData.width = endPos.x - startX;
+                    drawingData.height = endPos.y - startY;
+                } else if (currentTool === 'circle') {
+                    drawingData.startX = startX;
+                    drawingData.startY = startY;
+                    drawingData.radius = Math.sqrt(Math.pow(endPos.x - startX, 2) + Math.pow(endPos.y - startY, 2));
+                }
+                
+                socket.emit('draw', drawingData);
+            }
+            
+            ctx.beginPath();
+        }
+
+        function drawText(x, y, text) {
+            ctx.font = `${currentSize * 5}px Arial`;
+            ctx.fillStyle = currentColor;
+            ctx.fillText(text, x, y);
+        }
+
+        function clearCanvas() {
+            // Clear local canvas
+            ctx.fillStyle = '#1e1e1e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentSize;
+            
+            // Notify server to clear and get fresh state
+            socket.emit('clearCanvas', roomId);
+        }
+
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        // Event listeners
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(roomId);
+            showNotification('Room ID copied to clipboard!');
         });
+
+        document.getElementById('clear-canvas').addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear the canvas?')) {
+                clearCanvas();
+            }
+        });
+
+        document.getElementById('save-canvas').addEventListener('click', () => {
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'doodlesync-drawing.png';
+            link.href = dataUrl;
+            link.click();
+            showNotification('Drawing saved successfully!');
+        });
+
+        document.getElementById('leave-room-btn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to leave the room?')) {
+                window.location.href = '/';
+            }
+        });
+
+        // Tool selection
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTool = btn.dataset.tool;
+                
+                // Set different defaults for tools
+                const sizeMap = {
+                    'pencil': 3,
+                    'marker': 15,
+                    'brush': 20,
+                    'neon': 8,
+                    'eraser': 20
+                };
+                
+                if (sizeMap[currentTool]) {
+                    currentSize = sizeMap[currentTool];
+                    sizeSlider.value = currentSize;
+                    sizeValue.textContent = currentSize;
+                    ctx.lineWidth = currentSize;
+                }
+            });
+        });
+
+        // Color selection
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentColor = btn.dataset.color;
+                document.getElementById('color-picker').value = currentColor;
+                ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor;
+            });
+        });
+
+        document.getElementById('color-picker').addEventListener('input', (e) => {
+            currentColor = e.target.value;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentColor;
+        });
+
+        // Size selection
+        const sizeSlider = document.getElementById('size-slider');
+        sizeSlider.addEventListener('input', (e) => {
+            currentSize = parseInt(e.target.value);
+            sizeValue.textContent = currentSize;
+            ctx.lineWidth = currentSize;
+        });
+
+        // Brush style selection
+        document.querySelectorAll('.brush-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.brush-preset').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                brushStyle = btn.dataset.preset;
+                
+                if (brushStyle === 'dashed') {
+                    ctx.setLineDash([10, 5]);
+                } else if (brushStyle === 'dotted') {
+                    ctx.setLineDash([2, 3]);
+                } else if (brushStyle === 'textured') {
+                    ctx.setLineDash([5, 3, 2, 3]);
+                } else {
+                    ctx.setLineDash([]);
+                }
+            });
+        });
+
+        // Drawing event listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        // Initial notification
+        setTimeout(() => {
+            showNotification(`Welcome to DoodleSync Pro! Your username is ${username}`);
+        }, 1000);
     </script>
 </body>
 </html>
